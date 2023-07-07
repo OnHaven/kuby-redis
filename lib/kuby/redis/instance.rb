@@ -44,8 +44,7 @@ module Kuby
         {
           sentinels: [{ host: service_name, port: service_port }],
           url: 'redis://mymaster',
-          name: 'mymaster',
-          role: 'master'
+          name: 'mymaster'
         }
       end
 
