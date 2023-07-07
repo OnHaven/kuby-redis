@@ -11,7 +11,7 @@ module Kuby
       REPO_URL = 'https://spotahome.github.io/redis-operator'.freeze
 
       CHART_NAME = 'redis-operator/redis-operator'.freeze
-      CHART_VERSION = '3.1.4'.freeze
+      CHART_VERSION = '3.2.8'.freeze
       RELEASE_NAME = 'redis-operator'.freeze
       NAMESPACE = 'kube-system'.freeze
 
@@ -53,37 +53,33 @@ module Kuby
 
       def install_operator
         helm_cli.install_chart(CHART_NAME,
-          release: RELEASE_NAME,
-          version: CHART_VERSION,
-          namespace: NAMESPACE
-        )
+                               release: RELEASE_NAME,
+                               version: CHART_VERSION,
+                               namespace: NAMESPACE)
       end
 
       def upgrade_operator
         helm_cli.upgrade_chart(CHART_NAME,
-          release: RELEASE_NAME,
-          version: CHART_VERSION,
-          namespace: NAMESPACE
-        )
+                               release: RELEASE_NAME,
+                               version: CHART_VERSION,
+                               namespace: NAMESPACE)
       end
 
       def wait_for_api_resources
         time_elapsed = 0
 
         loop do
-          begin
-            if time_elapsed >= WAIT_MAX
-              raise APIResourcesError, 'timeout waiting for API resources to '\
-                "become available. Waited #{time_elapsed}s."
-            end
-
-            kubernetes_cli.api_resources
-            break
-          rescue KubernetesCLI::KubernetesError
-            yield
-            sleep WAIT_INTERVAL
-            time_elapsed += WAIT_INTERVAL
+          if time_elapsed >= WAIT_MAX
+            raise APIResourcesError, 'timeout waiting for API resources to '\
+              "become available. Waited #{time_elapsed}s."
           end
+
+          kubernetes_cli.api_resources
+          break
+        rescue KubernetesCLI::KubernetesError
+          yield
+          sleep WAIT_INTERVAL
+          time_elapsed += WAIT_INTERVAL
         end
       end
 

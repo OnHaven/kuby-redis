@@ -3,7 +3,7 @@ require 'kube-dsl'
 module Kuby
   module Redis
     class Instance
-      PORT = 26379
+      PORT = 26_379
 
       extend ::KubeDSL::ValueFields
 
@@ -43,7 +43,9 @@ module Kuby
       def connection_params
         {
           sentinels: [{ host: service_name, port: service_port }],
-          url: 'redis://mymaster'
+          url: 'redis://mymaster',
+          name: 'mymaster',
+          role: 'master'
         }
       end
 
